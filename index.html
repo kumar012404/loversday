@@ -54,9 +54,7 @@
             }
         }
 
-        /* ========================================
-           ANIMATED BACKGROUND GRADIENT
-        ======================================== */
+        /* Simplified Background for Mobile */
         body::before {
             content: '';
             position: fixed;
@@ -64,15 +62,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg,
-                    rgba(233, 30, 99, 0.3),
-                    rgba(156, 39, 176, 0.3),
-                    rgba(244, 143, 177, 0.3),
-                    rgba(194, 24, 91, 0.3));
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background: rgba(233, 30, 99, 0.05);
             z-index: -1;
             pointer-events: none;
+        }
+
+        /* Animated gradient only for desktop */
+        @media (min-width: 1024px) {
+            body::before {
+                background: linear-gradient(45deg,
+                        rgba(233, 30, 99, 0.2),
+                        rgba(156, 39, 176, 0.2),
+                        rgba(244, 143, 177, 0.2),
+                        rgba(194, 24, 91, 0.2));
+                background-size: 400% 400%;
+                animation: gradientShift 15s ease infinite;
+            }
         }
 
         @keyframes gradientShift {
@@ -105,10 +110,12 @@
 
         .heart {
             position: absolute;
+            bottom: -50px;
             font-size: 24px;
-            color: rgba(255, 182, 193, 0.6);
-            animation: floatUp 8s linear infinite;
+            color: rgba(255, 182, 193, 0.4);
+            animation: floatUp 10s linear infinite;
             opacity: 0;
+            will-change: transform, opacity;
         }
 
         .heart:nth-child(1) {
@@ -1386,68 +1393,67 @@
 
         @keyframes floatUp {
             0% {
-                bottom: -10%;
+                transform: translate3d(0, 0, 0);
                 opacity: 0;
             }
 
             10% {
-                opacity: 0.8;
+                opacity: 0.7;
             }
 
             100% {
-                bottom: 110%;
+                transform: translate3d(0, -110vh, 0);
                 opacity: 0;
             }
         }
 
-        /* Mobile Refinement for Envelope & Letter */
+        /* Mobile Refinement for Envelope & Letter - PERFECT PROPORTIONS */
         @media (max-width: 480px) {
             .envelope {
-                width: 280px;
-                height: 180px;
+                width: 250px;
+                height: 160px;
             }
 
             .envelope::before,
             .envelope::after {
-                border-top-width: 90px;
-                border-bottom-width: 90px;
-                border-right-width: 140px;
-                border-left-width: 140px;
+                border-top-width: 80px;
+                border-bottom-width: 80px;
+                border-right-width: 125px;
+                border-left-width: 125px;
             }
 
             .envelope-top {
-                border-top-width: 95px;
-                border-right-width: 140px;
-                border-left-width: 140px;
+                border-top-width: 85px;
+                border-right-width: 125px;
+                border-left-width: 125px;
             }
 
             .envelope-bottom {
-                border-right-width: 140px;
-                border-bottom-width: 180px;
-                border-left-width: 140px;
+                border-right-width: 125px;
+                border-bottom-width: 160px;
+                border-left-width: 125px;
             }
 
             .envelope.open .letter {
-                width: 260px;
-                height: 380px;
-                bottom: 100px;
-                /* Adjusting so it pops out more correctly */
-                transform: translate3d(-50%, -10px, 0);
+                width: 230px;
+                height: 320px;
+                bottom: 80px;
+                transform: translate3d(-50%, 0, 0);
                 padding: 20px;
             }
 
             .letter-header {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
                 margin-bottom: 10px;
             }
 
             .letter-text {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 line-height: 1.4;
             }
 
             .beloved-name {
-                font-size: 3rem;
+                font-size: 2.5rem;
             }
 
             .success-content {
