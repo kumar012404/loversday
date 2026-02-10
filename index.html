@@ -23,6 +23,10 @@
 
         html {
             scroll-behavior: smooth;
+            background-color: #1a0612;
+            /* Dark theme color */
+            overscroll-behavior: none;
+            /* Prevents white bounce on mobile */
         }
 
         body {
@@ -34,9 +38,20 @@
                     #7a1845 50%,
                     #c2185b 75%,
                     #e91e63 100%);
-            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: scroll;
+            /* Mobile friendly */
             color: #fff;
             line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Fixed background for desktops */
+        @media (min-width: 1024px) {
+            body {
+                background-attachment: fixed;
+            }
         }
 
         /* ========================================
@@ -1023,10 +1038,13 @@
         ======================================== */
         footer {
             text-align: center;
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 20px;
+            background: rgba(26, 6, 18, 0.95);
+            /* Matched dark theme */
+            backdrop-filter: blur(15px);
+            border-top: 2px solid rgba(255, 105, 180, 0.3);
+            position: relative;
+            z-index: 10;
         }
 
         footer p {
@@ -1372,23 +1390,25 @@
         .touch-sparkle {
             position: fixed;
             pointer-events: none;
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            /* Smaller for perf */
+            height: 15px;
             background: #ff69b4;
             border-radius: 50%;
             z-index: 10000;
-            animation: sparkle-burst 0.8s ease-out forwards;
-            filter: blur(2px);
+            animation: sparkle-burst 0.6s ease-out forwards;
+            filter: blur(1.5px);
+            will-change: transform, opacity;
         }
 
         @keyframes sparkle-burst {
             0% {
-                transform: scale(0) rotate(0deg);
+                transform: translate3d(-50%, -50%, 0) scale(0);
                 opacity: 1;
             }
 
             100% {
-                transform: scale(2) rotate(180deg);
+                transform: translate3d(var(--tx, 0), var(--ty, 0), 0) scale(1.5);
                 opacity: 0;
             }
         }
@@ -1399,37 +1419,36 @@
             z-index: 999;
             pointer-events: auto;
             cursor: pointer;
-            font-size: 2rem;
-            animation: floatUp 8s linear forwards;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.5));
-            user-select: none;
-            -webkit-user-select: none;
+            font-size: 1.8rem;
+            animation: floatUp 10s linear forwards;
+            filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.4));
+            will-change: transform;
         }
 
         @keyframes floatUp {
             0% {
-                transform: translateY(0) rotate(0deg);
+                transform: translate3d(0, 0, 0) rotate(0deg);
                 opacity: 0;
             }
 
             10% {
-                opacity: 0.8;
+                opacity: 0.7;
             }
 
             90% {
-                opacity: 0.8;
+                opacity: 0.7;
             }
 
             100% {
-                transform: translateY(-110vh) rotate(360deg);
+                transform: translate3d(0, -110vh, 0) rotate(360deg);
                 opacity: 0;
             }
         }
 
-        /* Mobile Refinement for Envelope */
+        /* Mobile Refinement for Envelope & Letter */
         @media (max-width: 480px) {
             .envelope {
-                width: 260px;
+                width: 280px;
                 height: 180px;
             }
 
@@ -1437,34 +1456,47 @@
             .envelope::after {
                 border-top-width: 90px;
                 border-bottom-width: 90px;
-                border-right-width: 130px;
-                border-left-width: 130px;
+                border-right-width: 140px;
+                border-left-width: 140px;
             }
 
             .envelope-top {
                 border-top-width: 95px;
-                border-right-width: 130px;
-                border-left-width: 130px;
+                border-right-width: 140px;
+                border-left-width: 140px;
             }
 
             .envelope-bottom {
-                border-right-width: 130px;
+                border-right-width: 140px;
                 border-bottom-width: 180px;
-                border-left-width: 130px;
+                border-left-width: 140px;
             }
 
             .envelope.open .letter {
-                width: 280px;
-                height: 350px;
-                bottom: 50px;
+                width: 260px;
+                height: 380px;
+                bottom: 100px;
+                /* Adjusting so it pops out more correctly */
+                transform: translate3d(-50%, -10px, 0);
+                padding: 20px;
             }
 
             .letter-header {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
+                margin-bottom: 10px;
             }
 
             .letter-text {
-                font-size: 1rem;
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            .beloved-name {
+                font-size: 3rem;
+            }
+
+            .success-content {
+                padding: 40px 20px;
             }
         }
 
@@ -2060,31 +2092,27 @@
 
         // Magical Touch Sparkle Effect
         function createSparkle(x, y) {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 4; i++) { // Optimized for mobile performance
                 const sparkle = document.createElement('div');
                 sparkle.className = 'touch-sparkle';
                 sparkle.style.left = x + 'px';
                 sparkle.style.top = y + 'px';
 
-                // Randomize direction
-                const angle = (i / 8) * Math.PI * 2;
-                const velocity = 2 + Math.random() * 2;
-                const vx = Math.cos(angle) * velocity;
-                const vy = Math.sin(angle) * velocity;
+                const tx = (Math.random() - 0.5) * 120 + 'px';
+                const ty = (Math.random() - 0.5) * 120 + 'px';
 
-                sparkle.style.setProperty('--vx', vx + 'px');
-                sparkle.style.setProperty('--vy', vy + 'px');
+                sparkle.style.setProperty('--tx', tx);
+                sparkle.style.setProperty('--ty', ty);
 
                 document.body.appendChild(sparkle);
-
-                setTimeout(() => sparkle.remove(), 800);
+                setTimeout(() => sparkle.remove(), 600);
             }
         }
 
         document.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             createSparkle(touch.clientX, touch.clientY);
-        });
+        }, { passive: true });
 
         document.addEventListener('mousedown', (e) => {
             createSparkle(e.clientX, e.clientY);
@@ -2122,7 +2150,7 @@
         }
 
         // Create bubbles periodically
-        setInterval(createBubble, 2000);
+        setInterval(createBubble, 4000); // Increased interval to 4s for performance
 
         // Magic Scratch Card Logic
         const canvas = document.getElementById('scratchCanvas');
@@ -2220,21 +2248,20 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 25; i++) { // Reduced from 60 for mobile performance
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.className = 'heart-blast';
-                    const items = ['❤️', '💖', '💕', '💗', '🎁', '🌹', '✨', '💍'];
+                    const items = ['❤️', '💖', '💕', '💗', '🎁', '🌹', '✨'];
                     heart.textContent = items[Math.floor(Math.random() * items.length)];
 
                     heart.style.left = centerX + 'px';
                     heart.style.top = centerY + 'px';
 
-                    // Random blast directions (more explosive)
-                    const tx = (Math.random() - 0.5) * 800 + 'px';
-                    const ty = (Math.random() - 0.8) * 800 + 'px';
-                    const r = (Math.random() * 720) + 'deg';
-                    const s = 1 + Math.random() * 3;
+                    const tx = (Math.random() - 0.5) * 600 + 'px';
+                    const ty = (Math.random() - 0.8) * 600 + 'px';
+                    const r = (Math.random() * 360) + 'deg';
+                    const s = 1 + Math.random() * 1.5;
 
                     heart.style.setProperty('--tx', tx);
                     heart.style.setProperty('--ty', ty);
@@ -2242,8 +2269,8 @@
                     heart.style.setProperty('--s', s);
 
                     document.body.appendChild(heart);
-                    setTimeout(() => heart.remove(), 1500);
-                }, Math.random() * 600);
+                    setTimeout(() => heart.remove(), 1200);
+                }, Math.random() * 400);
             }
 
             setTimeout(() => {
@@ -2278,20 +2305,19 @@
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 15; i++) { // Reduced from 30
                 const heart = document.createElement('div');
                 heart.className = 'heart-blast';
-                const hearts = ['❤️', '💖', '💕', '💗', '🧸', '🌹'];
+                const hearts = ['❤️', '💖', '💕', '💗', '🧸'];
                 heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
 
                 heart.style.left = centerX + 'px';
                 heart.style.top = centerY + 'px';
 
-                // Random blast directions
-                const tx = (Math.random() - 0.5) * 400 + 'px';
-                const ty = (Math.random() - 0.7) * 500 + 'px';
+                const tx = (Math.random() - 0.5) * 300 + 'px';
+                const ty = (Math.random() - 0.7) * 300 + 'px';
                 const r = (Math.random() * 360) + 'deg';
-                const s = 1 + Math.random() * 2;
+                const s = 1 + Math.random() * 1.5;
 
                 heart.style.setProperty('--tx', tx);
                 heart.style.setProperty('--ty', ty);
@@ -2299,7 +2325,7 @@
                 heart.style.setProperty('--s', s);
 
                 document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 1500);
+                setTimeout(() => heart.remove(), 1000);
             }
         }
 
